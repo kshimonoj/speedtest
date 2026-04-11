@@ -1,4 +1,5 @@
 node_modules/
 speedtest.db
+data/
 *.log
 .env

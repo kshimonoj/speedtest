@@ -7,7 +7,7 @@ const crypto = require('crypto');
 
 const app = express();
 const PORT = 3001;
-const DB_PATH = path.join(__dirname, 'speedtest.db');
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'speedtest.db');
 
 // Database setup
 const db = new Database(DB_PATH);

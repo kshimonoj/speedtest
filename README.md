@@ -38,6 +38,22 @@ node server.js
 http://localhost:{PORT}
 ```
 
+## Quick Start with Docker
+```bash
+git clone https://github.com/kshimonoj/speedtest.git
+cd speedtest
+docker compose up -d
+```
+Access: http://localhost:3000
+
+## Stop
+```bash
+docker compose down
+```
+
+## Data persistence
+SQLite database is stored in `./data/speedtest.db`
+
 ## Screenshots
 <!-- Add screenshots here -->
 
