@@ -54,10 +54,8 @@ node server.js
 
 # Access
 http://localhost:{PORT}
-http://192.168.19.150:{PORT}  # From other devices on LAN
 
 ## Notes
 - Port 3000 is in use by another app. Use the next available port.
-- QR code URL is generated using the server's LAN IP (192.168.19.150)
 - Frontend only (no build step required)
 - DB file (speedtest.db) is excluded from git via .gitignore

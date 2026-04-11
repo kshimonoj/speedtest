@@ -1,7 +1,7 @@
 # ⚡ SpeedRank — Wi-Fi Speed Test & Ranking
 
 A web application to measure Wi-Fi speed and compete on a real-time leaderboard.
-Accessible from any device on the same network via LAN IP.
+Run it locally and access from your browser.
 
 ## Features
 - 📶 Measure Download / Upload speed and Ping
@@ -35,11 +35,7 @@ node server.js
 
 ### Access
 ```
-# Local
 http://localhost:{PORT}
-
-# From other devices (smartphone, tablet, etc.)
-http://192.168.19.150:{PORT}
 ```
 
 ## Screenshots
