@@ -54,6 +54,10 @@ docker compose down
 ## Data persistence
 SQLite database is stored in `./data/speedtest.db`
 
+## ⚠️ Port Notice
+This app runs on port **3000** by default.
+Please make sure port 3000 is not already in use before starting.
+
 ## Screenshots
 <!-- Add screenshots here -->
 

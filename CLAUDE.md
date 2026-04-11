@@ -55,6 +55,12 @@ node server.js
 # Access
 http://localhost:{PORT}
 
+## Port
+- Default port: 3000
+- Defined in server.js: `const PORT = process.env.PORT || 3000`
+- Make sure port 3000 is not already in use before starting.
+- If port 3000 is in use, update both server.js and docker-compose.yml accordingly.
+
 ## Notes
 - Port 3000 is in use by another app. Use the next available port.
 - Frontend only (no build step required)
