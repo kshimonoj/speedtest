@@ -1,2 +1,4 @@
-results/idObfuscation_salt.php
-backend/getIP_serverLocation.php
+node_modules/
+speedtest.db
+*.log
+.env

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ SPEEDRANK - Wi-Fi Speed Test & Ranking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00ffff;
+    --magenta: #ff00ff;
+    --yellow: #ffff00;
+    --bg: #050510;
+    --bg2: #0a0a1f;
+    --card: #0d0d25;
+    --border: #1a1a3e;
+    --text: #e0e0ff;
+    --dim: #6060a0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  header {
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(0,255,255,0.05) 0%, transparent 100%);
+  }
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--cyan), var(--magenta));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 4px;
+  }
+  .tagline { color: var(--dim); font-size: 0.9rem; margin-top: 0.5rem; letter-spacing: 2px; text-transform: uppercase; }
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 30px rgba(0,255,255,0.05);
+  }
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .nickname-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .nickname-input {
+    flex: 1; min-width: 200px;
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.75rem 1rem; color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.3s;
+  }
+  .nickname-input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2); }
+  .btn-start {
+    background: linear-gradient(135deg, var(--cyan), #0088aa); border: none; border-radius: 8px;
+    padding: 0.75rem 2rem; color: #000; font-family: 'Orbitron', monospace;
+    font-size: 0.9rem; font-weight: 700; cursor: pointer; letter-spacing: 2px; transition: all 0.3s; white-space: nowrap;
+  }
+  .btn-start:hover { box-shadow: 0 0 20px rgba(0,255,255,0.5); transform: translateY(-2px); }
+  .btn-start:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .gauges { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+  @media (max-width: 600px) { .gauges { grid-template-columns: 1fr; } }
+  .gauge-wrap { text-align: center; }
+  .gauge-label { font-family: 'Orbitron', monospace; font-size: 0.75rem; letter-spacing: 2px; margin-bottom: 0.5rem; }
+  .gauge-label.dl { color: var(--cyan); }
+  .gauge-label.ul { color: var(--magenta); }
+  .gauge-label.ping { color: var(--yellow); }
+  .gauge-svg { width: 150px; height: 90px; overflow: visible; }
+  .gauge-track { fill: none; stroke: #1a1a3e; stroke-width: 12; stroke-linecap: round; }
+  .gauge-bar { fill: none; stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 0.3s ease; }
+  .gauge-bar.dl { stroke: url(#dlGrad); }
+  .gauge-bar.ul { stroke: url(#ulGrad); }
+  .gauge-bar.ping { stroke: url(#pingGrad); }
+  .gauge-value { font-family: 'Orbitron', monospace; font-size: 1.8rem; font-weight: 700; line-height: 1; }
+  .gauge-unit { font-size: 0.7rem; color: var(--dim); font-family: 'Orbitron', monospace; letter-spacing: 1px; }
+  .progress-wrap { margin-bottom: 1.5rem; display: none; }
+  .progress-label { font-size: 0.85rem; color: var(--dim); margin-bottom: 0.4rem; letter-spacing: 1px; }
+  .progress-bar-outer { background: var(--bg2); border-radius: 99px; height: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .progress-bar-inner { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--cyan), var(--magenta)); transition: width 0.3s; width: 0%; }
+  .result-card {
+    display: none;
+    background: linear-gradient(135deg, rgba(0,255,255,0.05), rgba(255,0,255,0.05));
+    border: 1px solid var(--cyan); border-radius: 10px; padding: 1.5rem; margin-top: 1rem;
+  }
+  .rank-row { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .rank-item { text-align: center; }
+  .rank-item .rank-num { font-family: 'Orbitron', monospace; font-size: 2.5rem; font-weight: 900; color: var(--cyan); line-height: 1; }
+  .rank-item .rank-sub { font-size: 0.75rem; color: var(--dim); letter-spacing: 1px; margin-top: 0.3rem; }
+  .share-row { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+  .share-btn {
+    padding: 0.5rem 1.2rem; border-radius: 6px; border: none; cursor: pointer;
+    font-size: 0.85rem; font-weight: 700; transition: all 0.2s; letter-spacing: 1px;
+  }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+  .btn-twitter { background: #1da1f2; color: #fff; }
+  .btn-linkedin { background: #0077b5; color: #fff; }
+  .btn-facebook { background: #1877f2; color: #fff; }
+  .btn-copy { background: var(--border); color: var(--cyan); border: 1px solid var(--cyan); }
+  .tab-row { display: flex; gap: 0; margin-bottom: 1.5rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); width: fit-content; }
+  .tab-btn { padding: 0.6rem 1.5rem; background: var(--bg2); border: none; color: var(--dim); cursor: pointer; font-family: 'Orbitron', monospace; font-size: 0.75rem; letter-spacing: 2px; transition: all 0.2s; }
+  .tab-btn.active { background: var(--cyan); color: #000; font-weight: 700; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  thead tr { border-bottom: 1px solid var(--border); }
+  th { padding: 0.6rem 0.8rem; text-align: left; font-family: 'Orbitron', monospace; font-size: 0.65rem; color: var(--dim); letter-spacing: 2px; text-transform: uppercase; white-space: nowrap; }
+  td { padding: 0.7rem 0.8rem; border-bottom: 1px solid rgba(26,26,62,0.5); white-space: nowrap; }
+  tbody tr:hover { background: rgba(0,255,255,0.03); }
+  .rank-medal { font-size: 1.2rem; }
+  .rank-num-cell { font-family: 'Orbitron', monospace; font-size: 0.8rem; color: var(--dim); }
+  .speed-dl { color: var(--cyan); font-weight: 700; }
+  .speed-ul { color: var(--magenta); font-weight: 700; }
+  .speed-ping { color: var(--yellow); }
+  .device-badge { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.7rem; color: var(--dim); }
+  .time-cell { font-size: 0.75rem; color: var(--dim); }
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
+  .stat-value { font-family: 'Orbitron', monospace; font-size: 1.5rem; font-weight: 700; color: var(--cyan); }
+  .stat-label { font-size: 0.7rem; color: var(--dim); letter-spacing: 2px; margin-top: 0.3rem; text-transform: uppercase; }
+  .share-section { display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap; }
+  .qr-wrap { text-align: center; flex-shrink: 0; }
+  .qr-wrap img { border: 2px solid var(--border); border-radius: 8px; display: block; }
+  .qr-url { font-size: 0.75rem; color: var(--dim); margin-top: 0.5rem; word-break: break-all; }
+  .share-links { flex: 1; min-width: 200px; }
+  .share-links h3 { font-family: 'Orbitron', monospace; font-size: 0.85rem; color: var(--cyan); margin-bottom: 1rem; letter-spacing: 2px; }
+  .social-btns { display: flex; flex-direction: column; gap: 0.75rem; }
+  .social-btn { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: all 0.2s; text-decoration: none; color: #fff; }
+  .social-btn:hover { transform: translateX(4px); }
+  .social-btn.twitter { background: #1da1f2; }
+  .social-btn.facebook { background: #1877f2; }
+  .social-btn.linkedin { background: #0077b5; }
+  .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--card); border: 1px solid var(--cyan); border-radius: 8px; padding: 0.75rem 1.5rem; color: var(--cyan); font-size: 0.9rem; z-index: 9999; transform: translateY(100px); opacity: 0; transition: all 0.3s; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<header>
+  <div class="logo">⚡ SPEEDRANK</div>
+  <div class="tagline">Wi-Fi Speed Test &amp; Ranking — Prove Your Speed</div>
+</header>
+<main>
+  <!-- Measurement Card -->
+  <div class="card">
+    <div class="card-title">▶ SPEED TEST</div>
+    <div class="nickname-row">
+      <input type="text" class="nickname-input" id="nicknameInput" placeholder="Enter your nickname..." maxlength="50">
+      <button class="btn-start" id="startBtn" onclick="startTest()">▶ START TEST</button>
+    </div>
+    <div class="gauges">
+      <div class="gauge-wrap">
+        <div class="gauge-label dl">⬇ DOWNLOAD</div>
+        <svg class="gauge-svg" viewBox="0 0 150 90">
+          <defs>
+            <linearGradient id="dlGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#00ffff"/>
+              <stop offset="100%" style="stop-color:#0088ff"/>
+            </linearGradient>
+          </defs>
+          <path class="gauge-track" d="M 15 80 A 60 60 0 0 1 135 80" />
+          <path class="gauge-bar dl" id="dlBar" d="M 15 80 A 60 60 0 0 1 135 80" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+        </svg>
+        <div class="gauge-value" id="dlValue" style="color:var(--cyan)">0.0</div>
+        <div class="gauge-unit">Mbps</div>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge-label ul">⬆ UPLOAD</div>
+        <svg class="gauge-svg" viewBox="0 0 150 90">
+          <defs>
+            <linearGradient id="ulGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#ff00ff"/>
+              <stop offset="100%" style="stop-color:#ff0088"/>
+            </linearGradient>
+          </defs>
+          <path class="gauge-track" d="M 15 80 A 60 60 0 0 1 135 80" />
+          <path class="gauge-bar ul" id="ulBar" d="M 15 80 A 60 60 0 0 1 135 80" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+        </svg>
+        <div class="gauge-value" id="ulValue" style="color:var(--magenta)">0.0</div>
+        <div class="gauge-unit">Mbps</div>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge-label ping">◎ PING</div>
+        <svg class="gauge-svg" viewBox="0 0 150 90">
+          <defs>
+            <linearGradient id="pingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#ffff00"/>
+              <stop offset="100%" style="stop-color:#ffaa00"/>
+            </linearGradient>
+          </defs>
+          <path class="gauge-track" d="M 15 80 A 60 60 0 0 1 135 80" />
+          <path class="gauge-bar ping" id="pingBar" d="M 15 80 A 60 60 0 0 1 135 80" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+        </svg>
+        <div class="gauge-value" id="pingValue" style="color:var(--yellow)">0</div>
+        <div class="gauge-unit">ms</div>
+      </div>
+    </div>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-label" id="progressLabel">Preparing...</div>
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner" id="progressBar"></div>
+      </div>
+    </div>
+    <div class="result-card" id="resultCard">
+      <div class="rank-row">
+        <div class="rank-item">
+          <div class="rank-num" id="todayRank">-</div>
+          <div class="rank-sub">Today's Rank</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-num" id="alltimeRank" style="color:var(--magenta)">-</div>
+          <div class="rank-sub">All-Time Rank</div>
+        </div>
+      </div>
+      <div class="share-row">
+        <button class="share-btn btn-twitter" onclick="shareTwitter()">𝕏 Share on X</button>
+        <button class="share-btn btn-linkedin" onclick="shareLinkedIn()">LinkedIn</button>
+        <button class="share-btn btn-facebook" onclick="shareFacebook()">Facebook</button>
+        <button class="share-btn btn-copy" onclick="copyResult()">📋 Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ranking Board -->
+  <div class="card">
+    <div class="card-title">🏆 RANKING BOARD</div>
+    <div class="tab-row">
+      <button class="tab-btn active" id="tabToday" onclick="switchTab('today')">TODAY</button>
+      <button class="tab-btn" id="tabAlltime" onclick="switchTab('alltime')">ALL TIME</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nickname</th>
+            <th>⬇ DL</th>
+            <th>⬆ UL</th>
+            <th>PING</th>
+            <th>Device</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="rankingBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="card">
+    <div class="card-title">📊 STATISTICS</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value" id="statTotal">-</div><div class="stat-label">TOTAL TESTS</div></div>
+      <div class="stat-card"><div class="stat-value" id="statUsers">-</div><div class="stat-label">USERS</div></div>
+      <div class="stat-card"><div class="stat-value" id="statAvg">-</div><div class="stat-label">AVG Mbps</div></div>
+      <div class="stat-card"><div class="stat-value" id="statMax" style="color:var(--cyan)">-</div><div class="stat-label">MAX Mbps</div></div>
+      <div class="stat-card"><div class="stat-value" id="statMin" style="color:var(--dim)">-</div><div class="stat-label">MIN Mbps</div></div>
+      <div class="stat-card"><div class="stat-value" id="statToday" style="color:var(--magenta)">-</div><div class="stat-label">TODAY</div></div>
+    </div>
+  </div>
+
+  <!-- Share This Page -->
+  <div class="card">
+    <div class="card-title">🔗 SHARE THIS PAGE</div>
+    <div class="share-section">
+      <div class="qr-wrap">
+        <img id="qrImg" src="" alt="QR Code" width="160" height="160">
+        <div class="qr-url" id="qrUrl">http://192.168.19.150:3001</div>
+      </div>
+      <div class="share-links">
+        <h3>SHARE ON SOCIAL</h3>
+        <div class="social-btns">
+          <a class="social-btn twitter" id="twitterShare" href="#" target="_blank">𝕏 Share on X</a>
+          <a class="social-btn facebook" id="facebookShare" href="#" target="_blank">f Facebook</a>
+          <a class="social-btn linkedin" id="linkedinShare" href="#" target="_blank">in LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const BASE_URL = 'http://192.168.19.150:3001';
+const PAGE_URL = BASE_URL;
+let currentTab = 'today';
+let lastResult = null;
+
+function detectDevice() {
+  const ua = navigator.userAgent;
+  if (/iPad/i.test(ua)) return '📱 iPad';
+  if (/iPhone/i.test(ua)) return '📱 iPhone';
+  if (/Android.*Mobile/i.test(ua)) return '📱 Android';
+  if (/Android/i.test(ua)) return '📱 Android Tablet';
+  if (/Windows/i.test(ua)) return '🖥️ Windows';
+  if (/Macintosh|Mac OS X/i.test(ua)) return '🍎 Mac';
+  if (/Linux/i.test(ua)) return '🐧 Linux';
+  return '💻 Unknown';
+}
+
+function setGauge(barId, valId, pct, value, decimals) {
+  decimals = decimals !== undefined ? decimals : 1;
+  const bar = document.getElementById(barId);
+  const val = document.getElementById(valId);
+  const circumference = 188.5;
+  const offset = circumference - (pct / 100) * circumference;
+  bar.style.strokeDashoffset = offset;
+  val.textContent = typeof value === 'number' ? value.toFixed(decimals) : value;
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = label;
+}
+
+async function measurePing() {
+  const times = [];
+  for (let i = 0; i < 5; i++) {
+    const t0 = performance.now();
+    await fetch('/api/stats?_=' + Date.now(), { cache: 'no-store' });
+    times.push(performance.now() - t0);
+  }
+  times.sort(function(a, b) { return a - b; });
+  const mid = times.slice(1, 4);
+  return mid.reduce(function(a, b) { return a + b; }, 0) / mid.length;
+}
+
+async function measureDownload(onProgress) {
+  const t0 = performance.now();
+  const res = await fetch('/api/download-test?_=' + Date.now(), { cache: 'no-store' });
+  const reader = res.body.getReader();
+  let received = 0;
+  const total = 20 * 1024 * 1024;
+  while (true) {
+    const chunk = await reader.read();
+    if (chunk.done) break;
+    received += chunk.value.length;
+    if (onProgress) onProgress(received / total);
+  }
+  const elapsed = (performance.now() - t0) / 1000;
+  return (received * 8) / (elapsed * 1e6);
+}
+
+async function measureUpload() {
+  const size = 5 * 1024 * 1024;
+  const data = new Uint8Array(size);
+  crypto.getRandomValues(data.slice(0, Math.min(size, 65536)));
+  const t0 = performance.now();
+  await fetch('/api/upload-test', {
+    method: 'POST',
+    body: data,
+    headers: { 'Content-Type': 'application/octet-stream' },
+    cache: 'no-store'
+  });
+  const elapsed = (performance.now() - t0) / 1000;
+  return (size * 8) / (elapsed * 1e6);
+}
+
+async function startTest() {
+  const nickname = document.getElementById('nicknameInput').value.trim();
+  if (!nickname) { showToast('⚠️ Please enter a nickname'); return; }
+
+  const btn = document.getElementById('startBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Testing...';
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  setGauge('dlBar', 'dlValue', 0, 0);
+  setGauge('ulBar', 'ulValue', 0, 0);
+  setGauge('pingBar', 'pingValue', 0, 0, 0);
+
+  try {
+    setProgress(5, '📡 Measuring Ping...');
+    const ping = await measurePing();
+    const pingPct = Math.max(0, Math.min(100, 100 - (ping / 200) * 100));
+    setGauge('pingBar', 'pingValue', pingPct, ping, 0);
+    setProgress(33, '⬇ Measuring Download...');
+
+    const dl = await measureDownload(function(pct) {
+      setProgress(33 + pct * 34, '⬇ Measuring Download... ' + (pct * 100).toFixed(0) + '%');
+    });
+    const dlPct = Math.min(100, (dl / 1000) * 100);
+    setGauge('dlBar', 'dlValue', dlPct, dl);
+    setProgress(67, '⬆ Measuring Upload...');
+
+    const ul = await measureUpload();
+    const ulPct = Math.min(100, (ul / 500) * 100);
+    setGauge('ulBar', 'ulValue', ulPct, ul);
+    setProgress(90, '💾 Saving results...');
+
+    const res = await fetch('/api/results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nickname: nickname,
+        download: parseFloat(dl.toFixed(2)),
+        upload: parseFloat(ul.toFixed(2)),
+        ping: parseFloat(ping.toFixed(0)),
+        device_type: detectDevice()
+      })
+    });
+    const data = await res.json();
+    setProgress(100, '✅ Test Complete!');
+
+    lastResult = {
+      nickname: nickname,
+      dl: dl.toFixed(1),
+      ul: ul.toFixed(1),
+      ping: ping.toFixed(0),
+      today_rank: data.today_rank,
+      alltime_rank: data.alltime_rank
+    };
+
+    document.getElementById('todayRank').textContent = data.today_rank ? '#' + data.today_rank : '-';
+    document.getElementById('alltimeRank').textContent = data.alltime_rank ? '#' + data.alltime_rank : '-';
+    document.getElementById('resultCard').style.display = 'block';
+
+    setTimeout(function() { document.getElementById('progressWrap').style.display = 'none'; }, 1000);
+    loadRanking();
+    loadStats();
+  } catch (err) {
+    showToast('❌ An error occurred during the test');
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '▶ TEST AGAIN';
+  }
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tabToday').className = 'tab-btn' + (tab === 'today' ? ' active' : '');
+  document.getElementById('tabAlltime').className = 'tab-btn' + (tab === 'alltime' ? ' active' : '');
+  loadRanking();
+}
+
+async function loadRanking() {
+  try {
+    const endpoint = currentTab === 'today' ? '/api/ranking/today' : '/api/ranking/alltime';
+    const res = await fetch(endpoint);
+    const rows = await res.json();
+    const tbody = document.getElementById('rankingBody');
+    const medals = ['🥇', '🥈', '🥉'];
+    tbody.innerHTML = rows.map(function(r, i) {
+      const rankDisplay = i < 3 ? '<span class="rank-medal">' + medals[i] + '</span>' : '<span class="rank-num-cell">' + (i + 1) + '</span>';
+      const dt = new Date(r.created_at);
+      const timeStr = (dt.getMonth() + 1) + '/' + dt.getDate() + ' ' + dt.getHours().toString().padStart(2, '0') + ':' + dt.getMinutes().toString().padStart(2, '0');
+      return '<tr><td>' + rankDisplay + '</td><td>' + escHtml(r.nickname) + '</td><td class="speed-dl">' + r.download.toFixed(1) + '</td><td class="speed-ul">' + r.upload.toFixed(1) + '</td><td class="speed-ping">' + r.ping.toFixed(0) + '</td><td><span class="device-badge">' + escHtml(r.device_type) + '</span></td><td class="time-cell">' + timeStr + '</td></tr>';
+    }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:2rem">No data yet</td></tr>';
+  } catch(e) { console.error(e); }
+}
+
+async function loadStats() {
+  try {
+    const res = await fetch('/api/stats');
+    const d = await res.json();
+    document.getElementById('statTotal').textContent = d.total_tests != null ? d.total_tests : '-';
+    document.getElementById('statUsers').textContent = d.total_users != null ? d.total_users : '-';
+    document.getElementById('statAvg').textContent = d.avg_download != null ? d.avg_download : '-';
+    document.getElementById('statMax').textContent = d.max_download != null ? d.max_download : '-';
+    document.getElementById('statMin').textContent = d.min_download != null ? d.min_download : '-';
+    document.getElementById('statToday').textContent = d.today_tests != null ? d.today_tests : '-';
+  } catch(e) { console.error(e); }
+}
+
+async function loadQR() {
+  try {
+    const res = await fetch('/api/qr?url=' + encodeURIComponent(PAGE_URL));
+    const d = await res.json();
+    document.getElementById('qrImg').src = d.qr;
+    document.getElementById('qrUrl').textContent = PAGE_URL;
+    const shareText = 'Check your Wi-Fi speed with SPEEDRANK! ' + PAGE_URL;
+    document.getElementById('twitterShare').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText);
+    document.getElementById('facebookShare').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(PAGE_URL);
+    document.getElementById('linkedinShare').href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(PAGE_URL);
+  } catch(e) { console.error(e); }
+}
+
+function buildShareText() {
+  if (!lastResult) return '';
+  return '⚡ Wi-Fi Speed Test Result\n' +
+    '👤 ' + lastResult.nickname + '\n' +
+    '⬇ Download: ' + lastResult.dl + ' Mbps\n' +
+    '⬆ Upload: ' + lastResult.ul + ' Mbps\n' +
+    '📡 Ping: ' + lastResult.ping + ' ms\n' +
+    '🏆 Today\'s Rank: #' + lastResult.today_rank + ' / All-Time: #' + lastResult.alltime_rank + '\n' +
+    PAGE_URL;
+}
+
+function shareTwitter() {
+  if (!lastResult) return;
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(buildShareText()), '_blank');
+}
+
+function shareLinkedIn() {
+  window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(PAGE_URL), '_blank');
+}
+
+function shareFacebook() {
+  window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(PAGE_URL), '_blank');
+}
+
+async function copyResult() {
+  const text = buildShareText();
+  let success = false;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      success = true;
+    } catch (e) {
+      console.warn('Clipboard API failed, trying fallback:', e);
+    }
+  }
+
+  if (!success) {
+    try {
+      const el = document.createElement('textarea');
+      el.value = text;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      success = document.execCommand('copy');
+      document.body.removeChild(el);
+    } catch (e) {
+      console.warn('execCommand fallback failed:', e);
+    }
+  }
+
+  if (success) {
+    showToast('📋 Copied!');
+  } else {
+    showToast('⚠️ Could not copy. Please copy manually.');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+loadRanking();
+loadStats();
+loadQR();
+setInterval(function() { loadRanking(); loadStats(); }, 30000);
+</script>
+</body>
+</html>

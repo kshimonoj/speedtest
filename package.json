@@ -1,0 +1,26 @@
+{
+  "name": "speedtest",
+  "version": "1.0.0",
+  "description": "![LibreSpeed Logo](https://github.com/librespeed/speedtest/blob/master/.logo/logo3.png?raw=true)",
+  "main": "speedtest.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adolfintel/speedtest.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adolfintel/speedtest/issues"
+  },
+  "homepage": "https://github.com/adolfintel/speedtest#readme",
+  "dependencies": {
+    "better-sqlite3": "^9.6.0",
+    "cors": "^2.8.6",
+    "express": "^4.22.1",
+    "qrcode": "^1.5.4"
+  }
+}

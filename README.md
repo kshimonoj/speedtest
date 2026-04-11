@@ -1,68 +1,49 @@
-![LibreSpeed Logo](https://github.com/librespeed/speedtest/blob/master/.logo/logo3.png?raw=true)
+# ⚡ SpeedRank — Wi-Fi Speed Test & Ranking
 
-# LibreSpeed
-
-No Flash, No Java, No Websocket, No Bullshit.
-
-This is a very lightweight Speedtest implemented in Javascript, using XMLHttpRequest and Web Workers.
-
-## Try it
-[Take a Speedtest](https://librespeed.org)
-
-## Compatibility
-All modern browsers are supported: IE11, latest Edge, latest Chrome, latest Firefox, latest Safari.  
-Works with mobile versions too.
+A web application to measure Wi-Fi speed and compete on a real-time leaderboard.
+Accessible from any device on the same network via LAN IP.
 
 ## Features
-* Download
-* Upload
-* Ping
-* Jitter
-* IP Address, ISP, distance from server (optional)
-* Telemetry (optional)
-* Results sharing (optional)
-* Multiple Points of Test (optional)
+- 📶 Measure Download / Upload speed and Ping
+- 🏆 Today's ranking & All-time ranking (TOP 50)
+- 📊 Statistics: total tests, users, avg/max/min speed
+- 📱 Device detection (iPhone / Android / iPad / Mac / Windows / Linux)
+- 📷 QR code for easy sharing
+- 🔗 Share results on X(Twitter) / LinkedIn / Facebook
+- 💾 Data persistence with SQLite
+- 📐 Responsive design (mobile / tablet / PC)
 
-![Screenshot](https://speedtest.fdossena.com/mpot_v6.gif)
+## Tech Stack
+- Node.js + Express
+- SQLite (better-sqlite3)
+- Vanilla HTML/CSS/JavaScript
+- QRCode.js
 
+## Setup
 
-## Server requirements
-* A reasonably fast web server with Apache 2 (nginx, IIS also supported)
-* PHP 5.4 (other backends also available)
-* MySQL database to store test results (optional, PostgreSQL and SQLite also supported)
-* A fast! internet connection
+### Requirements
+- Node.js v14+
+- npm
 
-## Installation videos
-* [Quick start installation guide for Ubuntu Server 19.04](https://fdossena.com/?p=speedtest/quickstart_v5_ubuntu.frag)
+### Install & Run
+```bash
+git clone https://github.com/{YOUR_USERNAME}/speedtest.git
+cd speedtest
+npm install
+node server.js
+```
 
-## Android app
-A template to build an Android client for your LibreSpeed installation is available [here](https://github.com/librespeed/speedtest-android).
+### Access
+```
+# Local
+http://localhost:{PORT}
 
-## Docker
-A docker image is available on the [Docker Hub](https://registry.hub.docker.com/r/adolfintel/speedtest), see `doc_docker.md` for more info about it
+# From other devices (smartphone, tablet, etc.)
+http://192.168.19.150:{PORT}
+```
 
-## Go backend
-A Go implementation is available in the [`speedtest-go`](https://github.com/librespeed/speedtest-go) repo, maintained by [Maddie Zhan](https://github.com/maddie).
-
-## Node.js backend
-A partial Node.js implementation is available in the `node` branch, developed by [dunklesToast](https://github.com/dunklesToast). It's not recommended to use at the moment.
-
-## Donate
-[![Donate with Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/fdossena/donate)  
-[Donate with PayPal](https://www.paypal.me/sineisochronic)  
+## Screenshots
+<!-- Add screenshots here -->
 
 ## License
-Copyright (C) 2016-2021 Federico Dossena
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/lgpl>.
+MIT
