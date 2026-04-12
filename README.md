@@ -1,3 +1,5 @@
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 # ⚡ SpeedRank — Wi-Fi Speed Test & Ranking
 
 A web application to measure Wi-Fi speed and compete on a real-time leaderboard.
