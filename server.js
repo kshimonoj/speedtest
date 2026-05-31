@@ -6,7 +6,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'speedtest.db');
 
 // Database setup
@@ -121,7 +121,7 @@ app.get('/api/stats', (req, res) => {
 // GET /api/qr
 app.get('/api/qr', async (req, res) => {
   try {
-    const url = req.query.url || `http://192.168.19.150:${PORT}`;
+    const url = req.query.url || `http://localhost:${PORT}`;
     const qr = await QRCode.toDataURL(url, { width: 200, margin: 1 });
     res.json({ qr });
   } catch (err) {
@@ -162,5 +162,5 @@ app.post('/api/upload-test', (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`SpeedRank server running on http://192.168.19.150:${PORT}`);
+  console.log(`SpeedRank server running on http://localhost:${PORT}`);
 });
