@@ -57,8 +57,16 @@ docker compose down
 SQLite database is stored in `./data/speedtest.db`
 
 ## ⚠️ Port Notice
-This app runs on port **3000** by default.
-Please make sure port 3000 is not already in use before starting.
+
+This app runs on port **3000** by default.  
+To use a different port, set the `PORT` environment variable in `docker-compose.yml`.
+
+```yaml
+environment:
+  - PORT=8080  # Change to your desired port
+ports:
+  - "8080:8080"
+```
 
 ## Screenshots
 <!-- Add screenshots here -->
