@@ -3,3 +3,4 @@ speedtest.db
 data/
 *.log
 .env
+.DS_Store
