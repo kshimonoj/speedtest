@@ -2,7 +2,7 @@ services:
   speedtest:
     build: .
     ports:
-      - "3000:3000"
+      - "3001:3001"
     volumes:
       - ./data:/app/data
     environment:
